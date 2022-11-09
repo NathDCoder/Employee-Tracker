@@ -157,11 +157,12 @@ app.post('/api/department', ({ body }, res) => {
   });
 });
 
-// Create an employee
-app.post('/api/employee', ({ body }, res) => {
-  const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+
+// Create a Role
+app.post('/api/role', ({ body }, res) => {
+  const sql = `INSERT INTO role (title, salary, department_id)
     VALUES (?)`;
-  const params = [body.first_name, last_name, role_id, manager_id];
+  const params = [body.title, body.salary, body.department_id];
   
   db.query(sql, params, (err, result) => {
     if (err) {
@@ -175,3 +176,20 @@ app.post('/api/employee', ({ body }, res) => {
   });
 });
 
+// Create an employee
+app.post('/api/employee', ({ body }, res) => {
+  const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES (?)`;
+  const params = [body.first_name, body.last_name, body.role_id, body.manager_id];
+  
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: 'success',
+      data: body
+    });
+  });
+});
