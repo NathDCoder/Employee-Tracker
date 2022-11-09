@@ -50,31 +50,27 @@ const db = mysql.createConnection(
         const {choices} = decisions;
 
           if (decisions === 'View all departments') {
-            viewAllEmployees();
+            viewAlldepartments();
           }
 
           if (decisions === 'View all roles') {
+            viewAllRoles();
+          }
+
+          if (decisions === 'View all Employees') {
             viewAllEmployees();
           }
 
-          if (decisions === 'Add role') {
-            viewAllEmployees();
+          if (decisions === 'Add department') {
+            addDepartment();
           }
 
-          if (decisions === 'Add employee') {
-            viewAllEmployees();
+          if (decisions === 'Add a role') {
+            addRole();
           }
 
-          if (decisions === 'Update department') {
-            viewAllEmployees();
-          }
-
-          if (decisions === 'Update role') {
-            viewAllEmployees();
-          }
-
-          if (decisions === 'Update employee') {
-            viewAllEmployees();
+          if (decisions === 'Add an employee') {
+            addEmployee();
           }
 
           if (decisions === 'exit') {
