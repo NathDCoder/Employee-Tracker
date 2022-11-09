@@ -1,6 +1,9 @@
+const connection = require('./db/connection');
 const express = require('express');
+const inquirer = require('inquirer');
 // Import and require mysql2
 const mysql = require('mysql2');
+
 
 const PORT = process.env.PORT || 3012;
 const app = express();
@@ -18,36 +21,157 @@ const db = mysql.createConnection(
       password: 'Root123',
       database: 'employees_db'
     },
-    console.log(`Connected to employee_db database.`)
-  );
+    console.log(`Connected to employee_db database.`),
+    questionaire()
+  ); 
 
-  app.get('/api/employee', (req, res) => {
-    const sql = `SELECT first_name, last_name, role_id AS position FROM employee`;
-    
-    db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
+
+  const questionaire = () => {
+    inquirer.prompt([
+      {
+        name: 'choices',
+        type: 'list',
+        message:'Which option would you like to select?',
+        choices: [
+          'View all departments',
+          'View all roles',
+          'View all employees',
+          'Add department',
+          'Add role',
+          'Add employee',
+          'Update department',
+          'Update role',
+          'Update employee',
+          'exit'
+        ]
       }
-      res.json({
-        message: 'success',
-        data: rows
+    ])
+      .then((decisions) => {
+        const {choices} = decisions;
+
+          if (decisions === 'View all departments') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'View all roles') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'Add role') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'Add employee') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'Update department') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'Update role') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'Update employee') {
+            viewAllEmployees();
+          }
+
+          if (decisions === 'exit') {
+            connection.end();
+          }
+          
       });
+  }
+  
+// Read list of all departments
+app.get('/api/department', (req, res) => {
+  const sql = `SELECT id, name, AS section FROM department`;
+  
+  db.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+       return;
+    }
+    res.json({
+      message: 'success',
+      data: rows
     });
   });
+});  
 
 
-
-
-
-
-
-
-
-
-
-
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+// Read all roles
+app.get('/api/role', (req, res) => {
+  const sql = `SELECT id, title AS position FROM role`;
   
+  db.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+       return;
+    }
+    res.json({
+      message: 'success',
+      data: rows
+    });
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+// Read list of all employees
+app.get('/api/employee', (req, res) => {
+  const sql = `SELECT first_name, last_name, role_id AS personel FROM employee`;
+  
+  db.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+       return;
+    }
+    res.json({
+      message: 'success',
+      data: rows
+    });
+  });
+});  
+
+
+// Create a Department
+app.post('/api/department', ({ body }, res) => {
+  const sql = `INSERT INTO department (name)
+    VALUES (?)`;
+  const params = [body.name];
+  
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: 'success',
+      data: body
+    });
+  });
+});
+
+// Create an employee
+app.post('/api/employee', ({ body }, res) => {
+  const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES (?)`;
+  const params = [body.first_name, last_name, role_id, manager_id];
+  
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: 'success',
+      data: body
+    });
+  });
+});
+
